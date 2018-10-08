@@ -16,7 +16,6 @@ services:
       RAILS_ENV: ${RAILS_ENV:-development}
     networks:
       default:
-      frontend:
     volumes:
       - .:/app:cached
       - rails_cache:/app/tmp/cache
@@ -47,7 +46,7 @@ services:
     ports:
       - ${WEB_PORT:-3000:3000}
 
-  webpack:
+  webpacker:
     <<: *app
     command: ./bin/webpack-dev-server
     ports:
@@ -81,7 +80,6 @@ services:
       - ${MAIL_WEB_PORT:-1080:1080}
     networks:
       default:
-      frontend:
 
 volumes:
   postgres:
@@ -92,8 +90,3 @@ volumes:
   rails_cache:
   packs:
   packs_test:
-
-networks:
-  frontend:
-    external:
-      name: frontend

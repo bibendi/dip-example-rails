@@ -1,21 +1,44 @@
 version: '3.4'
 
 services:
+  app:
+    networks:
+      frontend:
+
+  backend:
+    networks:
+      frontend:
+
   web:
     environment:
       VIRTUAL_HOST: ${APP_HOST}
       VIRTUAL_PATH: '/'
       VIRTUAL_PORT: 3000
+    networks:
+      frontend:
 
-  webpack:
+  webpacker:
     environment:
       WEBPACKER_DEV_SERVER_PUBLIC: webpack.${APP_HOST}
       VIRTUAL_HOST: webpack.${APP_HOST}
       VIRTUAL_PATH: '/'
       VIRTUAL_PORT: 3035
+    networks:
+      frontend:
+
+  worker:
+    networks:
+      frontend:
 
   mail:
     environment:
       VIRTUAL_HOST: mail.${APP_HOST}
       VIRTUAL_PATH: '/'
       VIRTUAL_PORT: 1080
+    networks:
+      frontend:
+
+networks:
+  frontend:
+    external:
+      name: frontend
