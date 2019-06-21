@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AddPosts < ActiveRecord::Migration[5.2]
   def change
     create_table :posts do |t|

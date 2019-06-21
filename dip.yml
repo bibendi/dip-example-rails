@@ -19,20 +19,13 @@ interaction:
     command: /bin/bash
     compose_run_options: [no-deps]
 
-  gem:
-    service: backend
-    command: gem
-    compose_run_options: [no-deps]
-
   bundle:
     service: backend
     command: bundle
-    compose_run_options: [no-deps]
 
   yarn:
     service: webpack
     command: yarn
-    compose_run_options: [no-deps]
 
   rake:
     service: backend
@@ -43,8 +36,15 @@ interaction:
     command: bundle exec rails
     subcommands:
       s:
-        service: web
-        compose_method: up
+        service: rails
+        compose_run_options: [service-ports]
+
+  webpack:
+    service: webpack
+    compose_run_options: [service-ports, use-aliases]
+
+  sidekiq:
+    service: sidekiq
 
   rspec:
     service: backend
@@ -53,8 +53,12 @@ interaction:
     command: bundle exec rspec
 
   psql:
-    service: backend
+    service: postgres
     command: psql -h postgres -U postgres
+
+  'redis-cli':
+    service: redis
+    command: redis-cli -h redis
 
 provision:
   - dip compose down --volumes

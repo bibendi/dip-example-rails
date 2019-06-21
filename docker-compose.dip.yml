@@ -9,7 +9,7 @@ services:
     networks:
       frontend:
 
-  web:
+  rails:
     environment:
       VIRTUAL_HOST: ${APP_HOST}
       VIRTUAL_PATH: '/'
@@ -17,7 +17,7 @@ services:
     networks:
       frontend:
 
-  webpacker:
+  webpack:
     environment:
       WEBPACKER_DEV_SERVER_PUBLIC: webpack.${APP_HOST}
       VIRTUAL_HOST: webpack.${APP_HOST}
@@ -26,7 +26,7 @@ services:
     networks:
       frontend:
 
-  worker:
+  sidekiq:
     networks:
       frontend:
 

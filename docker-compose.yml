@@ -6,14 +6,17 @@ services:
       context: .
       dockerfile: ./Dockerfile
       args:
-        PG_VERSION: '9.6'
-        NODE_VERSION: '8.11.1'
-        YARN_VERSION: '1.7.0'
-    image: dip-rails:0.1.0
+        PG_VERSION: '11'
+        NODE_VERSION: '11.8.0'
+        NODE_VERSION_MAJOR: '11'
+        YARN_VERSION: '1.13.0'
+    image: dip-rails:0.2.0
     tmpfs:
       - /tmp
     environment: &app_env
       RAILS_ENV: ${RAILS_ENV:-development}
+      HISTFILE: /bundle/.bash_history
+      MALLOC_ARENA_MAX: 2
     networks:
       default:
     volumes:
@@ -24,6 +27,10 @@ services:
       - assets:/app/public/assets
       - packs:/app/public/packs
       - packs_test:/app/public/packs-test
+      - .docker/.bashrc:/root/.bashrc:ro
+      - .docker/.pryrc:/app/.pryrc:ro
+      - .docker/.psqlrc:/root/.psqlrc:ro
+      - postgres_history:/var/log/psql_history
 
   backend: &backend
     <<: *app
@@ -35,18 +42,17 @@ services:
       DB_USER: postgres
       DB_PASSWORD: postgres
       WEBPACKER_DEV_SERVER_HOST: webpack
-      CAPYBARA_HEADLESS: '1'
     depends_on:
       - postgres
       - redis
 
-  web:
+  rails:
     <<: *backend
-    command: rails server -b 0.0.0.0
+    command: bundle exec rails server -b 0.0.0.0
     ports:
       - ${WEB_PORT:-3000:3000}
 
-  webpacker:
+  webpack:
     <<: *app
     command: ./bin/webpack-dev-server
     ports:
@@ -55,14 +61,16 @@ services:
       <<: *app_env
       WEBPACKER_DEV_SERVER_HOST: 0.0.0.0
 
-  worker:
+  sidekiq:
     <<: *backend
-    command: sidekiq -q mailers -q default
+    command: bundle exec sidekiq -q mailers -q default
 
   postgres:
-    image: postgres:9.6
+    image: postgres:11.1
     volumes:
+      - .docker/.psqlrc:/root/.psqlrc:ro
       - postgres:/var/lib/postgresql/data
+      - postgres_history:/var/log/psql_history
     ports:
       - 5432
 
@@ -83,6 +91,7 @@ services:
 
 volumes:
   postgres:
+  postgres_history:
   redis:
   bundle:
   node_modules:
@@ -90,3 +99,4 @@ volumes:
   rails_cache:
   packs:
   packs_test:
+  bash_history:
