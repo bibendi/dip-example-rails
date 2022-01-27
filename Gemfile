@@ -26,7 +26,7 @@ gem 'jbuilder', '~> 2.5'
 # gem 'bcrypt', '~> 3.1.7'
 
 # Use sidekiq for background jobs
-gem 'sidekiq', '~> 5.2'
+gem 'sidekiq', '~> 6.4'
 
 # Use ActiveStorage variant
 # gem 'mini_magick', '~> 4.8'
